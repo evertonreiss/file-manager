@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('mime_type');
             $table->text('description')->nullable();
             $table->bigInteger('file_size');
-            $table->boolean('is_visible')->default(true);
-            $table->boolean('is_dowloadable')->default(true);
+            $table->boolean('is_visible');
+            $table->boolean('is_downloadable');
             $table->timestamps();
 
             $table->foreign('uploaded_by')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
