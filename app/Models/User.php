@@ -44,6 +44,6 @@ class User extends Authenticatable
 
     public function mediaFiles()
     {
-        return $this->hasMany(MediaFile::class);
+        return $this->hasMany(MediaFile::class, 'uploaded_by');
     }
 }
