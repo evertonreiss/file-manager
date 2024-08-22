@@ -131,8 +131,29 @@ class MediaFileController extends Controller
      * @param  \App\Models\MediaFile  $mediaFile
      * @return \Illuminate\Http\Response
      */
-    public function destroy(MediaFile $mediaFile)
+    public function destroy($mediaFileId)
     {
-        //
+        // Busca o arquivo no banco de dados
+        $mediaFile = MediaFile::find($mediaFileId);
+
+        // Retorna uma mensagem caso o arquivo não exista
+        if (!$mediaFile) {
+            return response()->json(['message' => 'Nenhum registro encontrado'], 404);
+        }
+
+        // Caminho do arquivo no sistema de arquivos
+        $filePath = storage_path('app/' . $mediaFile->file_path);
+
+        // Verificar se o arquivo existe no sistema de arquivos
+        if (file_exists($filePath)) {
+            // Excluir o arquivo físico
+            unlink($filePath);
+        }
+
+        // Remover o registro do banco de dados
+        $mediaFile->delete();
+
+        return response()->noContent();
+        // return response()->json(['message' => 'Arquivo excluído com sucesso'], 200);
     }
 }
