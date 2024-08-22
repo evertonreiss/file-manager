@@ -7,8 +7,6 @@ use App\Http\Resources\V1\MediaFileResource;
 use App\Http\Resources\V1\MediaFileResourceCollection;
 use App\Models\MediaFile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class MediaFileController extends Controller
 {
@@ -19,7 +17,13 @@ class MediaFileController extends Controller
      */
     public function index()
     {
-        return new MediaFileResourceCollection(MediaFile::all());
+        $mediaFiles = MediaFile::all();
+
+        if ($mediaFiles->isEmpty()) {
+            return response()->json(['message' => 'Nenhum registro encontrado', 'data' => []], 200);
+        }
+
+        return new MediaFileResourceCollection($mediaFiles);
     }
 
     /**
@@ -60,9 +64,15 @@ class MediaFileController extends Controller
      * @param  \App\Models\MediaFile  $mediaFile
      * @return \Illuminate\Http\Response
      */
-    public function show(MediaFile $mediaFile)
+    public function show($id)
     {
-        //
+        $mediaFile = MediaFile::find($id);
+
+        if (!$mediaFile) {
+            return response()->json(['message' => 'Nenhum registro encontrado', 'data' => []], 404);
+        }
+
+        return new MediaFileResource($mediaFile);
     }
 
     /**
