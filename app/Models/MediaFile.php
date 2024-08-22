@@ -29,4 +29,9 @@ class MediaFile extends Model
         'is_visible' => 'boolean',
         'is_downloadable' => 'boolean',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
+    }
 }
