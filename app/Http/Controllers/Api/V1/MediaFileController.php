@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\MediaFileResource;
 use App\Http\Resources\V1\MediaFileResourceCollection;
 use App\Models\MediaFile;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MediaFileController extends Controller
 {
@@ -17,7 +19,8 @@ class MediaFileController extends Controller
      */
     public function index()
     {
-        $mediaFiles = MediaFile::all();
+        $mediaFiles = MediaFile::where('is_visible', true)->get();
+        // $userUploads = MediaFile::with('user')->where('uploaded_by', auth()->user()->id)->get();
 
         if ($mediaFiles->isEmpty()) {
             return response()->json(['message' => 'Nenhum registro encontrado', 'data' => []], 200);
@@ -49,7 +52,7 @@ class MediaFileController extends Controller
 
         // Guarda as informações dos arquivos no array
         $file = [
-            'uploaded_by' => 1, // Definir usuário quando adicionar autenticação
+            'uploaded_by' => auth()->user()->id,
             'file_name' => $uploaded_file->getClientOriginalName(),
             'file_path' => $uploaded_file->storeAs('public/uploaded_files', $uploaded_file->hashName(), 'local'),
             'mime_type' => $uploaded_file->getMimeType(),
