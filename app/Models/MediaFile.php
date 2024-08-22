@@ -24,4 +24,9 @@ class MediaFile extends Model
     protected $hidden = [
         'file_hash'
     ];
+
+    protected $casts = [
+        'is_visible' => 'boolean',
+        'is_downloadable' => 'boolean',
+    ];
 }

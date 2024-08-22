@@ -23,4 +23,5 @@ Route::prefix('v1')->group(function(){
     Route::get('arquivos', [MediaFileController::class, 'index']);
     Route::post('arquivos/upload', [MediaFileController::class, 'store']);
     Route::get('arquivos/{media_file}', [MediaFileController::class, 'show']);
+    Route::post('arquivos/{media_file}', [MediaFileController::class, 'update']);
 });

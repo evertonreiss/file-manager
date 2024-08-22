@@ -89,9 +89,40 @@ class MediaFileController extends Controller
      * @param  \App\Models\MediaFile  $mediaFile
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, MediaFile $mediaFile)
+    public function update(Request $request, $mediaFileId)
     {
-        //
+        // Pega a instância do arquivo
+        $mediaFile = MediaFile::find($mediaFileId);
+
+        // Mensagem de retorno caso o arquivo solicitado não exista
+        if (!$mediaFile) {
+            return response()->json(['message' => 'Nenhum registro encontrado', 'data' => []], 404);
+        }
+
+        // Verifica a existência do campo file_name, se houver, o nome do arquivo é atualizado e concatenado com a extensão original
+        if ($request->has('file_name')) {
+            $extension = pathinfo($mediaFile->file_path, PATHINFO_EXTENSION);
+            $file_name = $request->input('file_name') . '.' . $extension;
+        }
+
+        // Dados que são enviados por request, caso não venha nenhum valor, pega por padrão o antigo valor no model
+        $updateData = [
+            'file_name' => $file_name,
+            'description' => $request->input('description', $mediaFile->description),
+            'is_visible' => boolval($request->input('is_visible', $mediaFile->is_visible)),
+            'is_downloadable' => boolval($request->input('is_downloadable', $mediaFile->is_downloadable)),
+        ];
+
+        // Aplica as atualizações no model
+        $mediaFile->update($updateData);
+
+        if (!$mediaFile->wasChanged()) {
+            // Retorna os dados antigos caso não haja alteração
+            return response()->json(['message' => 'Nenhuma alteração efetuada', 'data' => new MediaFileResource($mediaFile)]);
+        }
+
+        // Verifica se houve alguma alteração e retorna os novos valores
+        return response()->json(['message' => 'Informações do arquivo atualizadas com sucesso', 'data' => new MediaFileResource($mediaFile)], 200);
     }
 
     /**
