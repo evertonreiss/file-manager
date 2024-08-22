@@ -18,5 +18,10 @@ class MediaFile extends Model
         'file_size',
         'is_visible',
         'is_downloadable',
+        'file_hash'
+    ];
+
+    protected $hidden = [
+        'file_hash'
     ];
 }
