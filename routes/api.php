@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuthContoller;
 use App\Http\Controllers\Api\V1\MediaFileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,9 +21,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->group(function () {
-    Route::get('arquivos', [MediaFileController::class, 'index']);
-    Route::post('arquivos', [MediaFileController::class, 'store']);
-    Route::get('arquivos/{media_file}', [MediaFileController::class, 'show']);
-    Route::put('arquivos/{media_file}', [MediaFileController::class, 'update']);
-    Route::delete('arquivos/{media_file}', [MediaFileController::class, 'destroy']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('arquivos', [MediaFileController::class, 'index']);
+        Route::post('arquivos', [MediaFileController::class, 'store']);
+        Route::get('arquivos/{media_file}', [MediaFileController::class, 'show']);
+        Route::put('arquivos/{media_file}', [MediaFileController::class, 'update']);
+        Route::delete('arquivos/{media_file}', [MediaFileController::class, 'destroy']);
+    });
+
+    Route::post('login', [AuthContoller::class, 'generateToken'])->name('login');
 });
