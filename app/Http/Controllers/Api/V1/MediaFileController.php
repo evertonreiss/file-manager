@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\MediaFileResource;
 use App\Http\Resources\V1\MediaFileResourceCollection;
 use App\Models\MediaFile;
-use App\Models\User;
 use App\Traits\V1\sendResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class MediaFileController extends Controller
 {
@@ -85,6 +83,12 @@ class MediaFileController extends Controller
             return $this->sendResponse(false, 'Registro não encontado', null, ['not_found' => 'Registro inexistente ou apagado'], 404);
         }
 
+        try {
+            $this->authorize('view', $mediaFile);
+        } catch (\Throwable $th) {
+            return $this->sendResponse(false, 'Acesso não autorizado', null, ['unauthorized' => 'Você não tem permissão para acessar este arquivo'], 401);
+        }
+
         return $this->sendResponse(true, 'Registro encontado', new MediaFileResource($mediaFile), null, 200);
     }
 
@@ -103,6 +107,12 @@ class MediaFileController extends Controller
         // Mensagem de retorno caso o arquivo solicitado não exista
         if (!$mediaFile) {
             return $this->sendResponse(false, 'Nenhum registro encontado', null, ['not_found' => 'Registro inexistente ou apagado'], 404);
+        }
+
+        try {
+            $this->authorize('update', $mediaFile);
+        } catch (\Throwable $th) {
+            return $this->sendResponse(false, 'Acesso não autorizado', null, ['unauthorized' => 'Você não tem permissão para acessar este arquivo'], 401);
         }
 
         // Verifica a existência do campo file_name, se houver, o nome do arquivo é atualizado e concatenado com a extensão original
@@ -143,6 +153,12 @@ class MediaFileController extends Controller
         // Retorna uma mensagem caso o arquivo não exista
         if (!$mediaFile) {
             return $this->sendResponse(false, 'Nenhum registro encontado', null, ['not_found' => 'Registro inexistente ou apagado'], 404);
+        }
+
+        try {
+            $this->authorize('delete', $mediaFile);
+        } catch (\Throwable $th) {
+            return $this->sendResponse(false, 'Acesso não autorizado', null, ['unauthorized' => 'Você não tem permissão para acessar este arquivo'], 401);
         }
 
         // Caminho do arquivo no sistema de arquivos
