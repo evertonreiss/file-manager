@@ -7,11 +7,14 @@ use App\Http\Resources\V1\MediaFileResource;
 use App\Http\Resources\V1\MediaFileResourceCollection;
 use App\Models\MediaFile;
 use App\Models\User;
+use App\Traits\V1\sendResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MediaFileController extends Controller
 {
+    use sendResponse;
+
     /**
      * Display a listing of the resource.
      *
@@ -23,10 +26,10 @@ class MediaFileController extends Controller
         // $userUploads = MediaFile::with('user')->where('uploaded_by', auth()->user()->id)->get();
 
         if ($mediaFiles->isEmpty()) {
-            return response()->json(['message' => 'Nenhum registro encontrado', 'data' => []], 200);
+            return $this->sendResponse(true, 'Nenhum registro encontrado', [], null, 200);
         }
 
-        return new MediaFileResourceCollection($mediaFiles);
+        return $this->sendResponse(true, 'Lista de arquivos', new MediaFileResourceCollection($mediaFiles), null, 200);
     }
 
     /**
@@ -47,7 +50,7 @@ class MediaFileController extends Controller
         $existingFile = MediaFile::where('file_hash', $fileHash)->first();
 
         if ($existingFile) {
-            return response()->json(['message' => 'Este arquivo já foi enviado anteriormente', 'data' => new MediaFileResource($existingFile)], 409);
+            return $this->sendResponse(false, 'Este arquivo já foi enviado anteriormente', new MediaFileResource($existingFile), ['file' => 'Arquivo duplicado'], 409);
         }
 
         // Guarda as informações dos arquivos no array
@@ -65,7 +68,7 @@ class MediaFileController extends Controller
 
         $created = MediaFile::create($file);
 
-        return response()->json(['message' => 'Arquivo salvo com sucesso', 'data' => new MediaFileResource($created)], 201);
+        return $this->sendResponse(true, 'Arquivo salvo com sucesso', new MediaFileResource($created), null, 201);
     }
 
     /**
@@ -79,10 +82,10 @@ class MediaFileController extends Controller
         $mediaFile = MediaFile::find($id);
 
         if (!$mediaFile) {
-            return response()->json(['message' => 'Nenhum registro encontrado', 'data' => []], 404);
+            return $this->sendResponse(false, 'Registro não encontado', null, ['not_found' => 'Registro inexistente ou apagado'], 404);
         }
 
-        return new MediaFileResource($mediaFile);
+        return $this->sendResponse(true, 'Registro encontado', new MediaFileResource($mediaFile), null, 200);
     }
 
     /**
@@ -99,7 +102,7 @@ class MediaFileController extends Controller
 
         // Mensagem de retorno caso o arquivo solicitado não exista
         if (!$mediaFile) {
-            return response()->json(['message' => 'Nenhum registro encontrado', 'data' => []], 404);
+            return $this->sendResponse(false, 'Nenhum registro encontado', null, ['not_found' => 'Registro inexistente ou apagado'], 404);
         }
 
         // Verifica a existência do campo file_name, se houver, o nome do arquivo é atualizado e concatenado com a extensão original
@@ -120,12 +123,10 @@ class MediaFileController extends Controller
         $mediaFile->update($updateData);
 
         if (!$mediaFile->wasChanged()) {
-            // Retorna os dados antigos caso não haja alteração
-            return response()->json(['message' => 'Nenhuma alteração efetuada', 'data' => new MediaFileResource($mediaFile)]);
+            return $this->sendResponse(true, 'Nenhuma alteração efetuada', new MediaFileResource($mediaFile), null, 200);
         }
 
-        // Verifica se houve alguma alteração e retorna os novos valores
-        return response()->json(['message' => 'Informações do arquivo atualizadas com sucesso', 'data' => new MediaFileResource($mediaFile)], 200);
+        return $this->sendResponse(true, 'Informações atualizadas com sucesso', new MediaFileResource($mediaFile), null, 200);
     }
 
     /**
@@ -141,7 +142,7 @@ class MediaFileController extends Controller
 
         // Retorna uma mensagem caso o arquivo não exista
         if (!$mediaFile) {
-            return response()->json(['message' => 'Nenhum registro encontrado'], 404);
+            return $this->sendResponse(false, 'Nenhum registro encontado', null, ['not_found' => 'Registro inexistente ou apagado'], 404);
         }
 
         // Caminho do arquivo no sistema de arquivos
@@ -157,6 +158,5 @@ class MediaFileController extends Controller
         $mediaFile->delete();
 
         return response()->noContent();
-        // return response()->json(['message' => 'Arquivo excluído com sucesso'], 200);
     }
 }
