@@ -29,5 +29,6 @@ Route::prefix('v1')->group(function () {
         Route::delete('arquivos/{media_file}', [MediaFileController::class, 'destroy']);
     });
 
-    Route::post('login', [AuthContoller::class, 'generateToken'])->name('login');
+    Route::post('register', [AuthContoller::class, 'register']);
+    Route::post('login', [AuthContoller::class, 'login'])->name('login');
 });
