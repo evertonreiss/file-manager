@@ -115,7 +115,8 @@ class MediaFileController extends Controller
             return $this->sendResponse(false, 'Acesso não autorizado', null, ['unauthorized' => 'Você não tem permissão para acessar este arquivo'], 401);
         }
 
-        // Verifica a existência do campo file_name, se houver, o nome do arquivo é atualizado e concatenado com a extensão original
+        // Guarda o nome original para o caso de não haver mudança, e caso haja alteração pega o novo nome com a extensão original
+        $file_name = $mediaFile->file_name;
         if ($request->has('file_name')) {
             $extension = pathinfo($mediaFile->file_path, PATHINFO_EXTENSION);
             $file_name = $request->input('file_name') . '.' . $extension;
