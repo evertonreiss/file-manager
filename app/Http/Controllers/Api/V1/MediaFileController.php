@@ -8,6 +8,7 @@ use App\Http\Resources\V1\MediaFileResourceCollection;
 use App\Models\MediaFile;
 use App\Traits\V1\sendResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MediaFileController extends Controller
 {
@@ -38,6 +39,17 @@ class MediaFileController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'uploaded_file' => 'required|file|max:20480|mimes:jpeg,png,gif,webp,svg,mp4,webm,ogg,avi,mpeg,mov,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,rtf,mp3,wav,flac,zip,rar,7z,gzip',
+            'description' => 'nullable|string',
+            'is_visible' => 'required|boolean',
+            'is_downloadable' => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendResponse(false, 'Erro ao enviar o arquivo', $request->all(), $validator->errors(), 422);
+        }
+
         // Recebe o arquivo enviado via request
         $uploaded_file = $request->file('uploaded_file');
 
@@ -101,6 +113,17 @@ class MediaFileController extends Controller
      */
     public function update(Request $request, $mediaFileId)
     {
+        $validator = Validator::make($request->all(), [
+            'file_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'is_visible' => 'required|boolean',
+            'is_downloadable' => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendResponse(false, 'Não foi possível atualizar o arquivo', $request->all(), $validator->errors(), 422);
+        }
+
         // Pega a instância do arquivo
         $mediaFile = MediaFile::find($mediaFileId);
 
