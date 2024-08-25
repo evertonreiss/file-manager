@@ -92,4 +92,9 @@ class MediaFilePolicy
     {
         //
     }
+
+    public function isDownloadable(User $user, MediaFile $mediaFile)
+    {
+        return $mediaFile->is_downloadable || $user->id === $mediaFile->uploaded_by;
+    }
 }

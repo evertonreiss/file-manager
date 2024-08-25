@@ -199,4 +199,23 @@ class MediaFileController extends Controller
 
         return response()->noContent();
     }
+
+    public function fileDownload($mediaFileId)
+    {
+        $mediaFile = MediaFile::find($mediaFileId);
+
+        if (!$mediaFile) {
+            return $this->sendResponse(false, 'Nenhum registro encontado', null, ['not_found' => 'Registro inexistente ou apagado'], 404);
+        }
+
+        try {
+            $this->authorize('isDownloadable', $mediaFile);
+        } catch (\Throwable $th) {
+            return $this->sendResponse(false, 'Acesso não autorizado', null, ['unauthorized' => 'Você não tem permissão para baixar este arquivo'], 401);
+        }
+
+        $filePath = storage_path('app/' . $mediaFile->file_path);
+
+        return response()->download($filePath, $mediaFile->file_name);
+    }
 }
