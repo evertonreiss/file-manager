@@ -30,9 +30,18 @@ class AuthContoller extends Controller
             return $this->sendResponse(false, 'Credenciais inválidas', null, ['credentials' => 'Os dados fornecidos são inválidos'], 401);
         }
 
-        $token['token'] = $user->createToken($request->userAgent())->plainTextToken;
+        // $token['token'] = $user->createToken($request->userAgent())->plainTextToken;
 
-        return $this->sendResponse(true, 'Token criado com sucesso',  $token, null, 201);
+        $data = [
+            'token' => $user->createToken($request->userAgent())->plainTextToken,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email
+            ]
+        ];
+
+        return $this->sendResponse(true, 'Token criado com sucesso',  $data, null, 201);
     }
 
     public function register(Request $request)
