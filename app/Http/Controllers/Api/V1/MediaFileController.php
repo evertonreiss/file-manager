@@ -21,8 +21,7 @@ class MediaFileController extends Controller
      */
     public function index()
     {
-        $mediaFiles = MediaFile::where('is_visible', true)->get();
-        // $userUploads = MediaFile::with('user')->where('uploaded_by', auth()->user()->id)->get();
+        $mediaFiles = MediaFile::with('user')->where('is_visible', true)->orWhere('uploaded_by', auth()->user()->id)->get();
 
         if ($mediaFiles->isEmpty()) {
             return $this->sendResponse(true, 'Nenhum registro encontrado', [], null, 200);
@@ -40,7 +39,7 @@ class MediaFileController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'uploaded_file' => 'required|file|max:20480|mimes:jpeg,png,gif,webp,svg,mp4,webm,ogg,avi,mpeg,mov,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,rtf,mp3,wav,flac,zip,rar,7z,gzip',
+            'uploaded_file' => 'required|file|max:20480|mimes:jpeg,png,gif,webp,svg,mp4,webm,ogg,avi,mpeg,mov,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,mp3,wav,zip,rar,7z,gzip',
             'description' => 'nullable|string',
             'is_visible' => 'required|boolean',
             'is_downloadable' => 'required|boolean',
