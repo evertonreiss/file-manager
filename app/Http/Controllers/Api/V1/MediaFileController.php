@@ -71,7 +71,7 @@ class MediaFileController extends Controller
             'mime_type' => $uploaded_file->getMimeType(),
             'file_size' => $uploaded_file->getSize(),
             'file_hash' => $fileHash,
-            'description' => $request->description,
+            'description' => $request->description ?? null,
             'is_visible' => boolval($request->is_visible),
             'is_downloadable' => boolval($request->is_downloadable)
         ];
