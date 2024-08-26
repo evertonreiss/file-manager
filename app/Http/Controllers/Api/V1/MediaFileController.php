@@ -66,7 +66,7 @@ class MediaFileController extends Controller
         // Guarda as informações dos arquivos no array
         $file = [
             'uploaded_by' => auth()->user()->id,
-            'file_name' => $uploaded_file->getClientOriginalName(),
+            'file_name' => pathinfo($uploaded_file->getClientOriginalName(), PATHINFO_FILENAME),
             'file_path' => $uploaded_file->storeAs('public/uploaded_files', $uploaded_file->hashName(), 'local'),
             'mime_type' => $uploaded_file->getMimeType(),
             'file_size' => $uploaded_file->getSize(),
@@ -138,16 +138,9 @@ class MediaFileController extends Controller
             return $this->sendResponse(false, 'Acesso não autorizado', null, ['unauthorized' => 'Você não tem permissão para acessar este arquivo'], 401);
         }
 
-        // Guarda o nome original para o caso de não haver mudança, e caso haja alteração pega o novo nome com a extensão original
-        $file_name = $mediaFile->file_name;
-        if ($request->has('file_name')) {
-            $extension = pathinfo($mediaFile->file_path, PATHINFO_EXTENSION);
-            $file_name = $request->input('file_name') . '.' . $extension;
-        }
-
         // Dados que são enviados por request, caso não venha nenhum valor, pega por padrão o antigo valor no model
         $updateData = [
-            'file_name' => $file_name,
+            'file_name' => $request->input('file_name', $mediaFile->file_name),
             'description' => $request->input('description', $mediaFile->description),
             'is_visible' => boolval($request->input('is_visible', $mediaFile->is_visible)),
             'is_downloadable' => boolval($request->input('is_downloadable', $mediaFile->is_downloadable)),
