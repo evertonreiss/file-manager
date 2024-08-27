@@ -125,35 +125,35 @@ Aqui estão os endpoints da API disponíveis na coleção do Postman:
 
 #### Arquivos
 
-1. **Listagem de arquivos**
+1. **Listagem de Arquivos**
    - **Método:** GET
    - **URL:** `localhost:8000/api/v1/arquivos`
    - **Autenticação:** Bearer Token
    - **Headers:**
      - `Accept: application/json`
 
-2. **Envio de arquivos**
+2. **Envio de Arquivos**
    - **Método:** POST
    - **URL:** `localhost:8000/api/v1/arquivos`
    - **Autenticação:** Bearer Token
    - **Headers:**
      - `Accept: application/json`
-   - **Body:**
-     - `uploaded_file`: Arquivo (Form Data)
-     - `description`: Descrição do arquivo
-     - `is_visible`: 1
-     - `is_downloadable`: 1
+   - **Body (Form Data):**
+     - `uploaded_file`: Arquivo (input do tipo file)
+     - `description`: `Descrição do arquivo`
+     - `is_visible`: `0 ou 1`
+     - `is_downloadable`: `0 ou 1`
 
-3. **Busca um arquivo**
+3. **Busca de um Arquivo**
    - **Método:** GET
-   - **URL:** `localhost:8000/api/v1/arquivos/{id}`
+   - **URL:** `localhost:8000/api/v1/arquivos/1`
    - **Autenticação:** Bearer Token
    - **Headers:**
      - `Accept: application/json`
 
-4. **Editar arquivo**
+4. **Editar um Arquivo**
    - **Método:** PUT
-   - **URL:** `localhost:8000/api/v1/arquivos/{id}`
+   - **URL:** `localhost:8000/api/v1/arquivos/1`
    - **Autenticação:** Bearer Token
    - **Headers:**
      - `Accept: application/json`
@@ -162,53 +162,46 @@ Aqui estão os endpoints da API disponíveis na coleção do Postman:
      {
        "file_name": "Nome do Arquivo",
        "description": "Descrição do arquivo",
-       "is_visible": true,
-       "is_downloadable": true
+       "is_visible": 0 ou 1,
+       "is_downloadable": 0 ou 1
      }
      ```
 
-5. **Deletar arquivo**
+5. **Deletar um Arquivo**
    - **Método:** DELETE
-   - **URL:** `localhost:8000/api/v1/arquivos/{id}`
+   - **URL:** `localhost:8000/api/v1/arquivos/1`
    - **Autenticação:** Bearer Token
    - **Headers:**
      - `Accept: application/json`
 
-6. **Download arquivo**
+6. **Download de Arquivo**
    - **Método:** GET
-   - **URL:** `localhost:8000/api/v1/arquivos/download/{id}`
+   - **URL:** `localhost:8000/api/v1/arquivos/download/1`
    - **Autenticação:** Bearer Token
    - **Headers:**
      - `Accept: application/json`
 
-#### User
+#### Usuário
 
-1. **Registrar usuário**
+1. **Registrar Usuário**
    - **Método:** POST
    - **URL:** `localhost:8000/api/v1/register`
    - **Headers:**
      - `Accept: application/json`
-   - **Body (JSON):**
-     ```json
-     {
-       "name": "Exemplo",
-       "email": "email@exemplo.com",
-       "password": "password"
-     }
-     ```
+   - **Body (Form Data):**
+     - `name`: `Nome de Usuário`
+     - `email`: `email@exemplo.com`
+     - `password`: `password`
 
 2. **Login**
    - **Método:** POST
    - **URL:** `localhost:8000/api/v1/login`
    - **Headers:**
      - `Accept: application/json`
-   - **Body (JSON):**
-     ```json
-     {
-       "email": "email@exemplo.com",
-       "password": "password"
-     }
-     ```
+   - **Body (Form Data):**
+     - `email`: `email@exemplo.com`
+     - `password`: `password`
+
 OBS: a URL pode ser difente caso o APP_PORT do .env não seja 8000
 
 ## Contribuições
